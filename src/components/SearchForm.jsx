@@ -13,13 +13,15 @@ const SearchForm = () => {
       const activeTabId = tab.id;
       const max = Number(numPages);
 
-      chrome.storage.local.set({ extractionCount: 0, results: [] });
+      chrome.storage.local.set({
+        extractionCount: 0,
+        results: [],
+      });
       chrome.storage.local.get(
         ['extractionCount', 'results'],
         function (result) {
           const extractionCount = result.extractionCount || 0;
           const results = result.results || [];
-
           chrome.scripting.executeScript({
             target: { tabId: activeTabId },
             func: performExtraction,
@@ -63,11 +65,13 @@ const SearchForm = () => {
         }, 2000);
       } else if (extractionCount === max) {
         /*eslint-disable no-undef */
-        chrome.runtime.sendMessage({ extractionComplete: true, data: results });
+        chrome.runtime.sendMessage({
+          extractionComplete: true,
+          data: results,
+        });
         return results;
       }
     }, 2000);
-    console.log(results);
     return results;
   };
 
@@ -78,12 +82,16 @@ const SearchForm = () => {
     /*eslint-disable no-undef */
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       const activeTabID = tabs[0].id;
-      chrome.scripting.executeScript({
-        target: { tabId: activeTabID },
-        function: (url) => {
-          window.location.href = url;
-        },
-        args: [searchUrl],
+      const currentUrl = tabs[0].url;
+      chrome.storage.local.set({ prevUrl: currentUrl }, function () {
+        // After storing the previous URL, navigate to the search URL
+        chrome.scripting.executeScript({
+          target: { tabId: activeTabID },
+          function: (url) => {
+            window.location.href = url;
+          },
+          args: [searchUrl],
+        });
       });
     });
   };

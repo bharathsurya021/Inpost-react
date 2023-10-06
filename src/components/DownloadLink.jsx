@@ -13,6 +13,23 @@ const DownloadLink = ({ data }) => {
     a.download = 'result.csv';
     a.click();
     URL.revokeObjectURL(url);
+
+    /*eslint-disable no-undef */
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      const activeTabID = tabs[0].id;
+      chrome.storage.local.get(['prevUrl'], function (result) {
+        const prevUrl = JSON.stringify(result.prevUrl);
+        // After storing the previous URL, navigate to the search URL
+        chrome.scripting.executeScript({
+          target: { tabId: activeTabID },
+          function: (url) => {
+            url = url.replace(/"/g, '');
+            window.location.href = url;
+          },
+          args: [prevUrl],
+        });
+      });
+    });
   };
 
   return (
