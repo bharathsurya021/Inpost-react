@@ -14,14 +14,6 @@ const App = () => {
     if (message.extractionComplete) {
       setOutputData(message.data);
       setDownloadLinkVisible(true);
-
-      chrome.scripting.executeScript({
-        target: { tabId: message.tabId },
-        function: (url) => {
-          window.location.href = url;
-        },
-        args: [message.prevUrl],
-      });
     }
   });
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const DownloadLink = ({ data }) => {
   const csvContent = data
@@ -13,13 +13,15 @@ const DownloadLink = ({ data }) => {
     a.download = 'result.csv';
     a.click();
     URL.revokeObjectURL(url);
+  };
 
+  const navigateToPrevUrl = () => {
     /*eslint-disable no-undef */
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const activeTabID = tabs[0].id;
-      chrome.storage.local.get(['prevUrl'], function (result) {
-        const prevUrl = JSON.stringify(result.prevUrl);
-        // After storing the previous URL, navigate to the search URL
+    chrome.storage.local.get(['prevUrl'], function (result) {
+      const prevUrl = JSON.stringify(result.prevUrl);
+      // After retrieving the previous URL, navigate to it
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const activeTabID = tabs[0].id;
         chrome.scripting.executeScript({
           target: { tabId: activeTabID },
           function: (url) => {
@@ -31,6 +33,11 @@ const DownloadLink = ({ data }) => {
       });
     });
   };
+
+  useEffect(() => {
+    // Call the navigateToPrevUrl function when the component mounts
+    navigateToPrevUrl();
+  }, []);
 
   return (
     <div>
