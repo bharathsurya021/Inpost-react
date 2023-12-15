@@ -16,9 +16,7 @@ const performExtraction = async (max) => {
     const newElementCount = postCards.length;
 
     if (newElementCount > currentElementCount) {
-      const elementsPerPage = newElementCount - currentElementCount;
-
-      for (let i = currentElementCount; i < newElementCount && currentElementCount < max; i++) {
+      for (let i = currentElementCount; currentElementCount < max && i < newElementCount; i++) {
         let hashtagsArray = [];
         let hyperLinksArray = [];
 
@@ -67,7 +65,6 @@ const performExtraction = async (max) => {
       }
 
       if (currentElementCount < max) {
-        // Continue scrolling if not reached the total max yet
         await scrollAndExtract();
         console.log(currentElementCount, 'less')
       } else {
