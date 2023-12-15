@@ -1,6 +1,4 @@
 let results = [];
-let extractionCount = 1;
-let maxExtractionCount;
 let currentElementCount = 0;
 
 const performExtraction = async (max) => {
@@ -64,7 +62,7 @@ const performExtraction = async (max) => {
         currentElementCount++;
       }
 
-      if (currentElementCount <= max) {
+      if (currentElementCount < max) {
         await scrollAndExtract();
       } else {
         chrome.runtime.sendMessage({
