@@ -1,50 +1,94 @@
 let results = [];
 let extractionCount = 1;
-const performExtraction = (max) => {
-  const height = document.body.scrollHeight;
-  window.scroll(0, height);
+let maxExtractionCount;
+let currentElementCount = 0;
 
-  const liElements = document.querySelectorAll(
-    'ul.reusable-search__entity-result-list li.reusable-search__result-container'
-  );
+const performExtraction = async (max) => {
+  const scrollAndExtract = async () => {
+    const height = document.body.scrollHeight;
+    window.scroll(0, height);
+    await new Promise((resolve) => setTimeout(resolve, 2000))
 
-  for (let i = 0; i < liElements.length; i++) {
-    const li = liElements[i];
-    const anchor = li.querySelector('a.app-aware-link');
-    const paragraph = li.querySelector('p.entity-result__content-summary');
+    const postCards = document.querySelectorAll(
+      'ul.reusable-search__entity-result-list li div.artdeco-card div.feed-shared-update-v2'
+    );
 
-    if (anchor && paragraph) {
-      const profileUrl = anchor.href;
-      const summary = paragraph.textContent.replace(/\s+/g, ' ').trim();
-      results.push({ profileUrl, summary });
+    const newElementCount = postCards.length;
+
+    if (newElementCount > currentElementCount) {
+      const elementsPerPage = newElementCount - currentElementCount;
+
+      for (let i = currentElementCount; i < newElementCount && currentElementCount < max; i++) {
+        let hashtagsArray = [];
+        let hyperLinksArray = [];
+
+        const card = postCards[i];
+        const actorContainers = card?.querySelector('div.update-components-actor__container');
+        const anchorLink = actorContainers?.querySelector('a.app-aware-link');
+        const profileUrl = anchorLink?.getAttribute('href');
+        const profileName = anchorLink?.getAttribute('aria-label');
+        const postContentElement = card?.querySelector('.feed-shared-update-v2__description-wrapper');
+        const postContent = postContentElement ? postContentElement?.innerText.replace(/\s+/g, ' ').trim() : "";
+        const postDateElement = card?.querySelector('.update-components-actor__sub-description-link .update-components-actor__sub-description .update-components-text-view span span');
+        const postDate = postDateElement?.innerText.trim();
+        const hashtags = postContent?.match(/#[^\s#]+/g);
+
+        // Add hashtags to the array if they exist
+        if (hashtags) {
+          hashtagsArray.push(...hashtags);
+        }
+
+        const hashtagHyperlinks = card.querySelectorAll('.update-components-text a');
+
+        hashtagHyperlinks.forEach(hashtag => {
+          const hyperLinkText = hashtag.textContent.trim();
+          const hyperLink = hashtag.getAttribute('href');
+
+          // Check if it's a hyperlink
+          if (hyperLink) {
+            hyperLinksArray.push({
+              text: hyperLinkText,
+              link: hyperLink
+            });
+          }
+        });
+
+        const user = {
+          profileName,
+          profileUrl,
+          hashtags: hashtagsArray,
+          hyperLinks: hyperLinksArray.length ? hyperLinksArray : "no links",
+          description: postContent,
+          posted: postDate,
+        };
+
+        results.push(user);
+        currentElementCount++;
+      }
+
+      if (currentElementCount < max) {
+        // Continue scrolling if not reached the total max yet
+        await scrollAndExtract();
+        console.log(currentElementCount, 'less')
+      } else {
+        console.log(currentElementCount, 'equals')
+        chrome.runtime.sendMessage({
+          extractionComplete: true,
+          data: results,
+        });
+      }
     }
-  }
+  };
+  // Initial call to start the extraction
+  await scrollAndExtract();
 
-  extractionCount++;
 
-  setTimeout(() => {
-    const nextButton = document.querySelector('button[aria-label="Next"]');
-    if (nextButton && extractionCount < max) {
-      nextButton.click();
-      setTimeout(() => {
-        performExtraction(max);
-      }, 2000);
-    } else if (extractionCount === max) {
-      chrome.runtime.sendMessage({
-        extractionComplete: true,
-        data: results,
-      });
-      return results;
-    }
-  }, 2000);
-  return results;
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startExtraction') {
     console.log('Received startExtraction message:', message);
     const { max, tabId } = message;
-
     performExtraction(max);
   }
 });

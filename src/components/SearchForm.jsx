@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 const SearchForm = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [numPages, setNumPages] = useState(10);
+  const [numPages, setNumPages] = useState(1);
   const [searchTabId, setSearchTabId] = useState(null); // Initialize searchTabId
 
   const handleSearch = () => {
     const keyword = searchKeyword;
-    const searchUrl = `https://www.linkedin.com/search/results/all/?keywords=%23${keyword}`;
+    const searchUrl = `https://www.linkedin.com/search/results/content/?keywords=%23${keyword}`;
 
     // Check if a searchTabId is already set, if not, open the URL and set the tab ID
     /*eslint-disable no-undef */
@@ -55,7 +55,7 @@ const SearchForm = () => {
         <input
           type="number"
           id="numPages"
-          min="10"
+          min="1"
           value={numPages}
           onChange={(e) => setNumPages(e.target.value)}
         />

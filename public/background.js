@@ -1,7 +1,7 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'performSearch') {
     const { searchKeyword } = message;
-    const searchUrl = `https://www.linkedin.com/search/results/all/?keywords=%23${searchKeyword}`;
+    const searchUrl = `https://www.linkedin.com/search/results/content/?keywords=%23${searchKeyword}`;
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentTab = tabs[0];

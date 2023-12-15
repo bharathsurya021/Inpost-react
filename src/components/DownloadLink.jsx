@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 const DownloadLink = ({ data }) => {
   const csvContent = data
-    .map((item) => `${item.profileUrl},${item.summary}`)
+    .map((item) => `${item.profileUrl},${item.description}`)
     .join('\n');
 
   const handleDownload = () => {
@@ -15,29 +15,29 @@ const DownloadLink = ({ data }) => {
     URL.revokeObjectURL(url);
   };
 
-  const navigateToPrevUrl = () => {
-    /*eslint-disable no-undef */
-    chrome.storage.local.get(['prevUrl'], function (result) {
-      const prevUrl = JSON.stringify(result.prevUrl);
-      // After retrieving the previous URL, navigate to it
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        const activeTabID = tabs[0].id;
-        chrome.scripting.executeScript({
-          target: { tabId: activeTabID },
-          function: (url) => {
-            url = url.replace(/"/g, '');
-            window.location.href = url;
-          },
-          args: [prevUrl],
-        });
-      });
-    });
-  };
+  // const navigateToPrevUrl = () => {
+  //   /*eslint-disable no-undef */
+  //   chrome.storage.local.get(['prevUrl'], function (result) {
+  //     const prevUrl = JSON.stringify(result.prevUrl);
+  //     // After retrieving the previous URL, navigate to it
+  //     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //       const activeTabID = tabs[0].id;
+  //       chrome.scripting.executeScript({
+  //         target: { tabId: activeTabID },
+  //         function: (url) => {
+  //           url = url.replace(/"/g, '');
+  //           window.location.href = url;
+  //         },
+  //         args: [prevUrl],
+  //       });
+  //     });
+  //   });
+  // };
 
-  useEffect(() => {
-    // Call the navigateToPrevUrl function when the component mounts
-    navigateToPrevUrl();
-  }, []);
+  // useEffect(() => {
+  //   // Call the navigateToPrevUrl function when the component mounts
+  //   navigateToPrevUrl();
+  // }, []);
 
   return (
     <div>
