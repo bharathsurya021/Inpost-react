@@ -64,11 +64,9 @@ const performExtraction = async (max) => {
         currentElementCount++;
       }
 
-      if (currentElementCount < max) {
+      if (currentElementCount <= max) {
         await scrollAndExtract();
-        console.log(currentElementCount, 'less')
       } else {
-        console.log(currentElementCount, 'equals')
         chrome.runtime.sendMessage({
           extractionComplete: true,
           data: results,
