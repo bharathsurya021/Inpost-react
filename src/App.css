@@ -20,6 +20,10 @@ label {
 }
 .filter-container {
   width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 16px;
 }
 .search-container,
 .page-container {

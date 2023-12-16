@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 const DownloadLink = ({ data }) => {
   const csvContent = data
-    .map((item) => `${item.profileUrl},${item.description}`)
+    .map((item) => `${item.profileName},${item.profileUrl},${item.description},${item.posted}`)
     .join('\n');
 
   const handleDownload = () => {
