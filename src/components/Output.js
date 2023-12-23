@@ -1,7 +1,30 @@
-// src/components/Output.js
-import React from 'react';
+import React, { useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const Output = ({ data }) => {
+  const generateUuidForData = (dataArray) => {
+    return dataArray.map((item) => ({
+      ...item,
+      collection: "linkedin_post_test",
+      upsertId: "postId",
+      postId: uuidv4(),
+    }));
+  };
+
+  useEffect(() => {
+    const newData = generateUuidForData(data);
+    const sendMessageToBackground = () => {
+      // eslint-disable-next-line
+      chrome.runtime.sendMessage({
+        action: 'sendDataToApi',
+        data: newData,
+      });
+    };
+
+    sendMessageToBackground();
+  }, [data]);
+
+
   return (
     <div>
       <textarea
