@@ -12,16 +12,19 @@ const Output = ({ data }) => {
   };
 
   useEffect(() => {
-    const newData = generateUuidForData(data);
-    const sendMessageToBackground = () => {
-      // eslint-disable-next-line
-      chrome.runtime.sendMessage({
-        action: 'sendDataToApi',
-        data: newData,
-      });
-    };
+    if (data && data?.length > 0) {
+      const newData = generateUuidForData(data);
+      const sendMessageToBackground = () => {
+        // eslint-disable-next-line
+        chrome.runtime.sendMessage({
+          action: 'sendDataToApi',
+          data: newData,
+        });
+      };
 
-    sendMessageToBackground();
+      sendMessageToBackground();
+    }
+
   }, [data]);
 
 

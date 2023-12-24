@@ -1,3 +1,24 @@
+async function sendDataToApi(data) {
+  try {
+    const response = await fetch('http://datascience.jobrobo.io:5000/insert_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log('API request sent successfully!', response.status, responseData);
+  } catch (error) {
+    console.error('Error sending API request:', error);
+  }
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'performSearch') {
     const { searchKeyword } = message;
@@ -9,29 +30,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.tabs.update(currentTab.id, { url: searchUrl });
     });
   } else if (message.action === 'startExtraction') {
-    // Relay the "startExtraction" message to the content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentTab = tabs[0];
       chrome.tabs.sendMessage(currentTab.id, message);
     });
   } else if (message.action === 'sendDataToApi') {
-    // Handle the new message type to perform API call
+    // Call the API function with the data
     const { data } = message;
-
-    // Perform API call using fetch directly in the background script
-    fetch('http://datascience.jobrobo.io:5000/insert_data', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      mode: 'no-cors'
-    })
-      .then((res) => {
-        console.log('API request sent successfully!', res?.message);
-      })
-      .catch((error) => {
-        console.error('Error sending API request:', error);
-      });
+    sendDataToApi(data);
   }
 });

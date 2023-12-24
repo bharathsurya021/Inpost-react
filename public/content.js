@@ -5,7 +5,7 @@ const performExtraction = async (max) => {
   const scrollAndExtract = async () => {
     const height = document.body.scrollHeight;
     window.scroll(0, height);
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 4000))
 
     const postCards = document.querySelectorAll(
       'ul.reusable-search__entity-result-list li div.artdeco-card div.feed-shared-update-v2'
