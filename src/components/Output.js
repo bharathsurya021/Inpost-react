@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const Output = ({ data }) => {
   const generateUuidForData = (dataArray) => {
-    return dataArray.map((item) => ({
-      ...item,
+    return {
       collection: "linkedin_post_test",
       upsertId: "postId",
       postId: uuidv4(),
-    }));
+      scraped_data: dataArray,
+    };
   };
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Output = ({ data }) => {
         // eslint-disable-next-line
         chrome.runtime.sendMessage({
           action: 'sendDataToApi',
-          data: newData,
+          data: [newData],
         });
       };
 
@@ -26,7 +26,6 @@ const Output = ({ data }) => {
     }
 
   }, [data]);
-
 
   return (
     <div>
