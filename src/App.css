@@ -23,16 +23,17 @@ label {
   display: inline-flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 16px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
-.search-container,
-.page-container {
+.page-container,
+.search-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 .logo {
   align-self: center;

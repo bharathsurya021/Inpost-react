@@ -1,31 +1,48 @@
+// SearchForm.js
 import React, { useState } from 'react';
-import Filter from './filter';
+import Filter from './Filter';
 
 const SearchForm = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [numPages, setNumPages] = useState(1);
   const [searchTabId, setSearchTabId] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedContentTypeOptions, setSelectedContentTypeOptions] = useState([]);
+  const [selectedSortByOption, setSelectedSortByOption] = useState(null);
+
+  const contentTypeOptions = [
+    { value: 'posts', label: 'Posts' },
+    { value: 'jobposts', label: 'Job Posts' },
+  ];
+
+  const sortByOptions = [
+    { value: 'latest', label: 'Latest' },
+    { value: 'top', label: 'Top Match' },
+  ];
 
   const handleSearch = () => {
     const keyword = searchKeyword;
-    const hasJobPostsFilter = selectedOptions.some(
+    const hasJobPostsFilter = selectedContentTypeOptions.some(
       (option) => option.value === 'jobposts'
-    );
-    const hasLatestFilter = selectedOptions.some(
-      (option) => option.value === 'latest'
     );
 
     let searchUrl = 'https://www.linkedin.com/search/results/content/';
 
     if (hasJobPostsFilter) {
-      searchUrl += '?contentType=%22jobs%22/';
+      searchUrl += '?contentType=%22jobs%22';
     }
 
-    searchUrl += `${hasJobPostsFilter ? '&' : '?'}keywords=%23${keyword}`;
+    searchUrl += `${hasJobPostsFilter ? '&' : '?'}keywords=${encodeURIComponent(keyword)}`;
 
-    if (hasLatestFilter) {
-      searchUrl += '&sortBy="date_posted"';
+    const sortBy = selectedSortByOption
+      ? selectedSortByOption.value === 'latest'
+        ? 'date_posted'
+        : selectedSortByOption.value === 'top'
+          ? 'relevance'
+          : ''
+      : '';
+
+    if (sortBy) {
+      searchUrl += `&sortBy="${sortBy}"`;
     }
 
     // Check if a searchTabId is already set, if not, open the URL and set the tab ID
@@ -68,8 +85,17 @@ const SearchForm = () => {
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
         <Filter
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
+          selectedOptions={selectedContentTypeOptions}
+          setSelectedOptions={setSelectedContentTypeOptions}
+          options={contentTypeOptions}
+          label="Content Type"
+        />
+
+        <Filter
+          selectedOptions={selectedSortByOption ? [selectedSortByOption] : []}
+          setSelectedOptions={(selected) => setSelectedSortByOption(selected[0] || null)}
+          options={sortByOptions}
+          label="Sort By"
         />
         <button onClick={handleSearch}>Search keyword</button>
       </div>

@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import './App.css';
 import SearchForm from './components/SearchForm';
-import Output from './components/Output';
 import DownloadLink from './components/DownloadLink';
 
 const App = () => {
@@ -24,7 +23,6 @@ const App = () => {
         Search hashtag, extract profiles, and their post summaries
       </p>
       <SearchForm />
-      <Output data={outputData} />
       {downloadLinkVisible && <DownloadLink data={outputData} />}
     </div>
   );

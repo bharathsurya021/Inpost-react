@@ -23,7 +23,7 @@ const performExtraction = async (max) => {
         const anchorLink = actorContainers?.querySelector('a.app-aware-link');
         const profileUrl = anchorLink?.getAttribute('href');
         const profileName = anchorLink?.getAttribute('aria-label');
-        const postContentElement = card?.querySelector('.feed-shared-update-v2__description-wrapper');
+        const postContentElement = card?.querySelector('.feed-shared-update-v2__description .update-components-text');
         const postContent = postContentElement ? postContentElement?.innerText.replace(/\s+/g, ' ').trim() : "";
         const postDateElement = card?.querySelector('.update-components-actor__sub-description-link .update-components-actor__sub-description .update-components-text-view span span');
         const postDate = postDateElement?.innerText.trim();

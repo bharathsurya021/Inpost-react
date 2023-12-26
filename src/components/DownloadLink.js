@@ -1,6 +1,16 @@
 import React, { useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const DownloadLink = ({ data }) => {
+
+  const generateUuidForData = (dataArray) => {
+    return {
+      collection: "linkedin_post_test",
+      upsertId: "postId",
+      postId: uuidv4(),
+      scraped_data: dataArray,
+    };
+  };
   const csvContent = data
     .map((item) => `${item.profileName},${item.profileUrl},${item.description},${item.posted}`)
     .join('\n');
@@ -14,30 +24,21 @@ const DownloadLink = ({ data }) => {
     a.click();
     URL.revokeObjectURL(url);
   };
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      const newData = generateUuidForData(data);
+      const sendMessageToBackground = () => {
+        // eslint-disable-next-line
+        chrome.runtime.sendMessage({
+          action: 'sendDataToApi',
+          data: [newData],
+        });
+      };
 
-  // const navigateToPrevUrl = () => {
-  //   /*eslint-disable no-undef */
-  //   chrome.storage.local.get(['prevUrl'], function (result) {
-  //     const prevUrl = JSON.stringify(result.prevUrl);
-  //     // After retrieving the previous URL, navigate to it
-  //     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  //       const activeTabID = tabs[0].id;
-  //       chrome.scripting.executeScript({
-  //         target: { tabId: activeTabID },
-  //         function: (url) => {
-  //           url = url.replace(/"/g, '');
-  //           window.location.href = url;
-  //         },
-  //         args: [prevUrl],
-  //       });
-  //     });
-  //   });
-  // };
+      sendMessageToBackground();
+    }
 
-  // useEffect(() => {
-  //   // Call the navigateToPrevUrl function when the component mounts
-  //   navigateToPrevUrl();
-  // }, []);
+  }, [data]);
 
   return (
     <div>
