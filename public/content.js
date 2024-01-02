@@ -23,6 +23,11 @@ const performExtraction = async (max) => {
         const anchorLink = actorContainers?.querySelector('a.app-aware-link');
         const profileUrl = anchorLink?.getAttribute('href');
         const profileName = anchorLink?.getAttribute('aria-label');
+        const profileRoleElement = actorContainers?.querySelector('.update-components-actor__description span');
+        const profileRole = profileRoleElement?.innerText.trim() || profileRoleElement?.textContent.trim();
+        const commentsCountElement = card.querySelector('.social-details-social-counts__comments .social-details-social-counts__count-value');
+        const commentsCountText = commentsCountElement?.innerText || commentsCountElement?.textContent;
+        const commentsCount = parseInt(commentsCountText?.trim()) || 0;
         const postContentElement = card?.querySelector('.feed-shared-update-v2__description .update-components-text');
         const postContent = postContentElement ? postContentElement?.innerText.replace(/\s+/g, ' ').trim() : "";
         const postDateElement = card?.querySelector('.update-components-actor__sub-description-link .update-components-actor__sub-description .update-components-text-view span span');
@@ -52,6 +57,8 @@ const performExtraction = async (max) => {
         const user = {
           profileName,
           profileUrl,
+          profileRole,
+          total_comments: commentsCount,
           hashtags: hashtagsArray,
           hyperLinks: hyperLinksArray.length ? hyperLinksArray : "no links",
           description: postContent,
