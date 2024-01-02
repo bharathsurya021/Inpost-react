@@ -123,7 +123,8 @@ const SearchForm = () => {
         <input
           type="number"
           id="numPosts"
-          min="1"
+          min={1}
+          max={150}
           value={numPages}
           onChange={(e) => setNumPages(e.target.value)}
         />
