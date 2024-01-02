@@ -6,13 +6,19 @@ const SearchForm = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [numPages, setNumPages] = useState(1);
   const [searchTabId, setSearchTabId] = useState(null);
-  const [selectedContentTypeOptions, setSelectedContentTypeOptions] = useState([]);
+  // const [selectedContentTypeOptions, setSelectedContentTypeOptions] = useState([]);
   const [selectedSortByOption, setSelectedSortByOption] = useState(null);
+  const [selectedDatePostedOption, setSelectedDatePostedOption] = useState(null);
 
-  const contentTypeOptions = [
-    { value: 'posts', label: 'Posts' },
-    { value: 'jobposts', label: 'Job Posts' },
+  const datePostedOptions = [
+    { value: 'past-24h', label: 'Past 24 Hours' },
+    { value: 'past-week', label: 'Past Week' },
+    { value: 'past-month', label: 'Past Month' },
   ];
+  // const contentTypeOptions = [
+  //   { value: 'posts', label: 'Posts' },
+  //   { value: 'jobposts', label: 'Job Posts' },
+  // ];
 
   const sortByOptions = [
     { value: 'latest', label: 'Latest' },
@@ -21,17 +27,22 @@ const SearchForm = () => {
 
   const handleSearch = () => {
     const keyword = searchKeyword;
-    const hasJobPostsFilter = selectedContentTypeOptions.some(
-      (option) => option.value === 'jobposts'
-    );
+    // const hasJobPostsFilter = selectedContentTypeOptions.some(
+    //   (option) => option.value === 'jobposts'
+    // );
 
-    let searchUrl = 'https://www.linkedin.com/search/results/content/';
+    let searchUrl = 'https://www.linkedin.com/search/results/content/?contentType=%22jobs%22';
 
-    if (hasJobPostsFilter) {
-      searchUrl += '?contentType=%22jobs%22';
+    // if (hasJobPostsFilter) {
+    //   searchUrl += '?contentType=%22jobs%22';
+    // }
+
+    const datePosted = selectedDatePostedOption ? selectedDatePostedOption.value : '';
+    if (datePosted) {
+      searchUrl += `&datePosted="${datePosted}"`;
     }
-
-    searchUrl += `${hasJobPostsFilter ? '&' : '?'}keywords=${encodeURIComponent(keyword)}`;
+    // searchUrl += `${hasJobPostsFilter ? '&' : '?'}keywords=${encodeURIComponent(keyword)}`;
+    searchUrl += `&keywords=${encodeURIComponent(keyword)}`;
 
     const sortBy = selectedSortByOption
       ? selectedSortByOption.value === 'latest'
@@ -84,18 +95,25 @@ const SearchForm = () => {
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
-        <Filter
+        {/* <Filter
           selectedOptions={selectedContentTypeOptions}
           setSelectedOptions={setSelectedContentTypeOptions}
           options={contentTypeOptions}
           label="Content Type"
-        />
+        /> */}
 
         <Filter
           selectedOptions={selectedSortByOption ? [selectedSortByOption] : []}
           setSelectedOptions={(selected) => setSelectedSortByOption(selected[0] || null)}
           options={sortByOptions}
           label="Sort By"
+        />
+
+        <Filter
+          selectedOptions={selectedDatePostedOption ? [selectedDatePostedOption] : []}
+          setSelectedOptions={(selected) => setSelectedDatePostedOption(selected[0] || null)}
+          options={datePostedOptions}
+          label="Date Posted"
         />
         <button onClick={handleSearch}>Search keyword</button>
       </div>
