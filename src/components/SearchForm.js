@@ -80,6 +80,10 @@ const SearchForm = () => {
         action: 'startExtraction',
         max: numPages,
         tabId: searchTabId,
+        filters: {
+          sortBy: selectedSortByOption ? selectedSortByOption.value : null,
+          datePosted: selectedDatePostedOption ? selectedDatePostedOption.value : null,
+        },
       });
     }
   };

@@ -1,7 +1,7 @@
-let results = [];
+let postResults = [];
+let authorResults = [];
 let currentElementCount = 0;
-
-const performExtraction = async (max) => {
+const performExtraction = async (max, filters) => {
   const scrollAndExtract = async () => {
     const height = document.body.scrollHeight;
     window.scroll(0, height);
@@ -54,18 +54,24 @@ const performExtraction = async (max) => {
           }
         });
 
-        const user = {
-          profileName,
-          profileUrl,
-          profileRole,
-          total_comments: commentsCount,
+        const post = {
+          authorTitle: profileRole,
+          selectedFilters: filters,
           hashtags: hashtagsArray,
           hyperLinks: hyperLinksArray.length ? hyperLinksArray : "no links",
           description: postContent,
           posted: postDate,
         };
 
-        results.push(user);
+        const author = {
+          authorName: profileName,
+          authorUrl: profileUrl,
+          authorTitle: profileRole,
+          total_comments: commentsCount,
+        };
+
+        postResults.push(post);
+        authorResults.push(author);
         currentElementCount++;
       }
 
@@ -74,7 +80,7 @@ const performExtraction = async (max) => {
       } else {
         chrome.runtime.sendMessage({
           extractionComplete: true,
-          data: results,
+          data: { posts: postResults, authors: authorResults },
         });
       }
     }
@@ -88,7 +94,7 @@ const performExtraction = async (max) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startExtraction') {
     console.log('Received startExtraction message:', message);
-    const { max, tabId } = message;
-    performExtraction(max);
+    const { max, tabId, filters } = message;
+    performExtraction(max, filters);
   }
 });
