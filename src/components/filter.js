@@ -10,7 +10,6 @@ const Filter = ({ selectedOptions, setSelectedOptions, options, label }) => {
     <div className="filter-container">
       <label>{label}:</label>
       <Select
-        isMulti
         options={options}
         value={selectedOptions}
         onChange={handleChange}

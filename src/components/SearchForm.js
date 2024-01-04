@@ -9,7 +9,10 @@ const SearchForm = () => {
   // const [selectedContentTypeOptions, setSelectedContentTypeOptions] = useState([]);
   const [selectedSortByOption, setSelectedSortByOption] = useState(null);
   const [selectedDatePostedOption, setSelectedDatePostedOption] = useState(null);
-
+  const [emailFilter, setEmailFilter] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [monthsFilter, setMonthsFilter] = useState(1);
+  const [minCommentsFilter, setMinCommentsFilter] = useState(1);
   const datePostedOptions = [
     { value: 'past-24h', label: 'Past 24 Hours' },
     { value: 'past-week', label: 'Past Week' },
@@ -19,12 +22,14 @@ const SearchForm = () => {
   //   { value: 'posts', label: 'Posts' },
   //   { value: 'jobposts', label: 'Job Posts' },
   // ];
-
   const sortByOptions = [
     { value: 'latest', label: 'Latest' },
     { value: 'top', label: 'Top Match' },
   ];
-
+  const [emailOptions] = useState([
+    { value: 'Yes', label: 'Yes' },
+    { value: 'No', label: 'No' },
+  ]);
   const handleSearch = () => {
     const keyword = searchKeyword;
     // const hasJobPostsFilter = selectedContentTypeOptions.some(
@@ -83,9 +88,16 @@ const SearchForm = () => {
         filters: {
           sortBy: selectedSortByOption ? selectedSortByOption.value : null,
           datePosted: selectedDatePostedOption ? selectedDatePostedOption.value : null,
+          isEmail: emailFilter,
+          commentsPosted: monthsFilter,
+          commentsLimit: parseInt(minCommentsFilter, 10),
         },
       });
     }
+  };
+  const handleEmailFilterChange = (value) => {
+    setEmailFilter(value);
+    setShowAdvancedFilters(value);
   };
 
   return (
@@ -107,18 +119,63 @@ const SearchForm = () => {
         /> */}
 
         <Filter
-          selectedOptions={selectedSortByOption ? [selectedSortByOption] : []}
-          setSelectedOptions={(selected) => setSelectedSortByOption(selected[0] || null)}
+          selectedOptions={selectedSortByOption}
+          setSelectedOptions={(selected) => setSelectedSortByOption(selected)}
           options={sortByOptions}
           label="Sort By"
         />
 
         <Filter
-          selectedOptions={selectedDatePostedOption ? [selectedDatePostedOption] : []}
-          setSelectedOptions={(selected) => setSelectedDatePostedOption(selected[0] || null)}
+          selectedOptions={selectedDatePostedOption}
+          setSelectedOptions={(selected) => setSelectedDatePostedOption(selected)}
           options={datePostedOptions}
           label="Date Posted"
         />
+        <div className='page-container'>
+          <label>Emails:</label>
+          <div className='email-filter-container'>
+            {emailOptions.map(option => (
+              <div className='email-filter-inputs' key={option.value}>
+                <input
+                  type="radio"
+                  id={`email${option.value}`}
+                  name="emailFilter"
+                  value={option.value}
+                  checked={emailFilter === (option.value === 'Yes')}
+                  onChange={() => handleEmailFilterChange(option.value === 'Yes')}
+                />
+                <label htmlFor={`email${option.value}`}>{option.label}</label>
+              </div>
+            ))}
+          </div>
+
+        </div>
+        {showAdvancedFilters && (
+          <div className='advanced-filters-container'>
+            <div className='advanced-filter-container'>
+              <label htmlFor="monthsFilter">Posted Under (in months):</label>
+              <input
+                type="number"
+                id="monthsFilter"
+                min={1}
+                value={monthsFilter}
+                onChange={(e) => setMonthsFilter(e.target.value)}
+              />
+            </div>
+
+            <div className='advanced-filter-container'>
+              <label htmlFor="minCommentsFilter">Minimum Comments:</label>
+              <input
+                type="number"
+                id="minCommentsFilter"
+                min={1}
+                value={minCommentsFilter}
+                onChange={(e) => setMinCommentsFilter(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+
         <button onClick={handleSearch}>Search keyword</button>
       </div>
 

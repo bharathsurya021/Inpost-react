@@ -6,7 +6,6 @@ const performExtraction = async (max, filters) => {
     const height = document.body.scrollHeight;
     window.scroll(0, height);
     await new Promise((resolve) => setTimeout(resolve, 4000))
-
     const postCards = document.querySelectorAll(
       'ul.reusable-search__entity-result-list li div.artdeco-card div.feed-shared-update-v2'
     );
@@ -17,6 +16,7 @@ const performExtraction = async (max, filters) => {
       for (let i = currentElementCount; currentElementCount < max && i < newElementCount; i++) {
         let hashtagsArray = [];
         let hyperLinksArray = [];
+        let emailArray = []
 
         const card = postCards[i];
         const actorContainers = card?.querySelector('div.update-components-actor__container');
@@ -54,6 +54,19 @@ const performExtraction = async (max, filters) => {
           }
         });
 
+        if (filters?.isEmail && commentsCount > filters?.commentsLimit) {
+          const commentContainers = card.querySelectorAll('.comments-comment-item-content-body');
+
+          commentContainers.forEach(commentContainer => {
+            // Check for mailto links in each comment
+            const mailtoLinks = commentContainer.querySelectorAll('a[href^="mailto:"]');
+            mailtoLinks.forEach(mailtoLink => {
+              const email = mailtoLink.getAttribute('href').replace('mailto:', '');
+              emailArray.push(email);
+            });
+          });
+        }
+
         const post = {
           authorTitle: profileRole,
           selectedFilters: filters,
@@ -68,6 +81,8 @@ const performExtraction = async (max, filters) => {
           authorUrl: profileUrl,
           authorTitle: profileRole,
           total_comments: commentsCount,
+          total_emails: emailArray.length,
+          email: emailArray
         };
 
         postResults.push(post);

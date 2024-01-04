@@ -26,14 +26,40 @@ label {
   gap: 8px;
   margin-bottom: 16px;
 }
+.advanced-filters-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.email-filter-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 14px;
+}
+.email-filter-inputs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+}
+.email-filter-inputs label,
+.email-filter-inputs input {
+  margin: 0;
+}
 .page-container,
-.search-container {
+.search-container,
+.advanced-filter-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
+}
+.advanced-filter-container {
+  margin: 0px;
 }
 .logo {
   align-self: center;
