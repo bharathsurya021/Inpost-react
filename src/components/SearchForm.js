@@ -1,6 +1,8 @@
 // SearchForm.js
 import React, { useState } from 'react';
 import Filter from './Filter';
+import { filterOptions } from '../utils/filterOptions';
+
 
 const SearchForm = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -13,23 +15,12 @@ const SearchForm = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [monthsFilter, setMonthsFilter] = useState(1);
   const [minCommentsFilter, setMinCommentsFilter] = useState(1);
-  const datePostedOptions = [
-    { value: 'past-24h', label: 'Past 24 Hours' },
-    { value: 'past-week', label: 'Past Week' },
-    { value: 'past-month', label: 'Past Month' },
-  ];
-  // const contentTypeOptions = [
-  //   { value: 'posts', label: 'Posts' },
-  //   { value: 'jobposts', label: 'Job Posts' },
-  // ];
-  const sortByOptions = [
-    { value: 'latest', label: 'Latest' },
-    { value: 'top', label: 'Top Match' },
-  ];
-  const [emailOptions] = useState([
-    { value: 'Yes', label: 'Yes' },
-    { value: 'No', label: 'No' },
-  ]);
+  const {
+    sortBy: sortByOptions,
+    datePosted: datePostedOptions,
+    email: emailOptions
+  } = filterOptions;
+
   const handleSearch = () => {
     const keyword = searchKeyword;
     // const hasJobPostsFilter = selectedContentTypeOptions.some(
@@ -131,6 +122,7 @@ const SearchForm = () => {
           options={datePostedOptions}
           label="Date Posted"
         />
+        {/*
         <div className='page-container'>
           <label>Emails:</label>
           <div className='email-filter-container'>
@@ -175,7 +167,7 @@ const SearchForm = () => {
             </div>
           </div>
         )}
-
+       */}
         <button onClick={handleSearch}>Search keyword</button>
       </div>
 
